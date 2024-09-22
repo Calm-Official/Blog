@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="zxlx">
+  <meta name="keywords" content="Blog,Html">
+  
+    <meta name="description" content="搭建完Hexo，我们需要一个评论服务，在Fluid主题里反复挑选，发现Remark42在颜值和功能都达到需求，所以这一篇我们来搭建一个评论服务">
+  
+  
+  
+  <title>Docker搭建Remark42评论系统 - zxlxのBlog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zxlx.ink","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>zxlxのBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Links</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Docker搭建Remark42评论系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-15 22:17" pubdate>
+          September 15, 2024 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          6 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Docker搭建Remark42评论系统</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    Last updated on September 22, 2024 pm
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>搭建完Hexo，我们需要一个评论服务，在Fluid主题里反复挑选，发现Remark42在颜值和功能都达到需求，所以这一篇我们来搭建一个评论服务。</p>
+<h2 id="2-介绍"><a href="#2-介绍" class="headerlink" title="2. 介绍"></a>2. 介绍</h2><p>Remark42 是一个开源、自托管、轻量级且功能强大的评论服务</p>
+<p><img src="https://img.ins.run/L9yZ0R.webp" srcset="/img/loading.gif" lazyload alt="介绍.webp"></p>
+<ul>
+<li>支持匿名、邮箱登录</li>
+<li>支持各种OAuth，如GitHub、Google、Facebook、Twitter、Yandex</li>
+<li>支持数据迁移，可以导入Disqus和WordPress的评论数据</li>
+<li>支持手动备份和自动备份，支持备份数据恢复</li>
+<li>强大的管理功能，管理员可以置顶、删除评论和用户禁言</li>
+<li>支持浅色和深色模式，带有树和普通演示文稿的多层嵌套评论</li>
+<li>支持多种评论排序</li>
+<li>支持最近的评论</li>
+<li>支持投票，个人标示和验证</li>
+<li>支持RSS</li>
+<li>支持通知</li>
+<li>支持Docker的部署</li>
+</ul>
+<h2 id="3-展示"><a href="#3-展示" class="headerlink" title="3. 展示"></a>3. 展示</h2><p>官方的Demo：<a target="_blank" rel="noopener" href="https://remark42.com/demo">https://remark42.com/demo</a></p>
+<p><img src="https://img.ins.run/e45X8z.webp" srcset="/img/loading.gif" lazyload alt="Demo.webp"></p>
+<h2 id="3-相关地址"><a href="#3-相关地址" class="headerlink" title="3. 相关地址"></a>3. 相关地址</h2><p>Github：<a target="_blank" rel="noopener" href="https://github.com/umputun/remark42">https://github.com/umputun/remark42</a><br>官网：<a target="_blank" rel="noopener" href="https://remark42.com/">https://remark42.com</a></p>
+<h2 id="4-环境说明"><a href="#4-环境说明" class="headerlink" title="4. 环境说明"></a>4. 环境说明</h2><ul>
+<li>服务器：我自己搭建用的是 <a target="_blank" rel="noopener" href="https://racknerd.com/"><strong>Racknerd</strong></a> 的VPS 一台，最好是选 非大陆（香港）的服务器</li>
+<li>系统：<strong>Debian10</strong>或以上（<strong>Ubuntu 20.04</strong>以上）</li>
+<li>域名一个，可以去<a target="_blank" rel="noopener" href="https://wanwang.aliyun.com/">阿里云</a>，<a target="_blank" rel="noopener" href="https://www.namesilo.com/">Namesilo</a>上注册一个</li>
+</ul>
+<h2 id="5-搭建过程"><a href="#5-搭建过程" class="headerlink" title="5. 搭建过程"></a>5. 搭建过程</h2><p>官方提供了两种安装方式，一种是Docker，一种是二进制，这里采用Docker安装的方式</p>
+<h3 id="5-1-创建安装目录"><a href="#5-1-创建安装目录" class="headerlink" title="5.1 创建安装目录"></a>5.1 创建安装目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> -i<br><br><span class="hljs-built_in">mkdir</span> -p /root/data/docker_data/ramark42<br><br><span class="hljs-built_in">cd</span> /root/data/docker_data/ramark42<br></code></pre></td></tr></table></figure>
+
+<h3 id="5-2-创建并编辑-docker-compose-yml-文件"><a href="#5-2-创建并编辑-docker-compose-yml-文件" class="headerlink" title="5.2 创建并编辑 docker-compose.yml 文件"></a>5.2 创建并编辑 docker-compose.yml 文件</h3><p>这是官方的配置文件</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">version</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2&quot;</span><br><br><span class="hljs-attribute">services</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-attribute">remark</span><span class="hljs-punctuation">:</span><br>    <span class="hljs-comment"># remove the next line in case you want to use this docker-compose separately</span><br>    <span class="hljs-comment"># as otherwise it would complain for absence of Dockerfile</span><br>    <span class="hljs-attribute">build</span><span class="hljs-punctuation">:</span> <span class="hljs-string">.</span><br>    <span class="hljs-attribute">image</span><span class="hljs-punctuation">:</span> <span class="hljs-string">umputun/remark42:latest</span><br>    <span class="hljs-attribute">container_name</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;remark42&quot;</span><br>    <span class="hljs-attribute">hostname</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;remark42&quot;</span><br>    <span class="hljs-attribute">restart</span><span class="hljs-punctuation">:</span> <span class="hljs-string">always</span><br><br>    <span class="hljs-attribute">logging</span><span class="hljs-punctuation">:</span><br>      <span class="hljs-attribute">driver</span><span class="hljs-punctuation">:</span> <span class="hljs-string">json-file</span><br>      <span class="hljs-attribute">options</span><span class="hljs-punctuation">:</span><br>        <span class="hljs-attribute">max-size</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10m&quot;</span><br>        <span class="hljs-attribute">max-file</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;5&quot;</span><br><br>    <span class="hljs-comment"># uncomment to expose directly (no proxy)</span><br>    <span class="hljs-comment">#ports:</span><br>    <span class="hljs-comment">#  - &quot;80:8080&quot;</span><br>    <span class="hljs-comment">#  - &quot;443:8443&quot;</span><br><br>    <span class="hljs-attribute">environment</span><span class="hljs-punctuation">:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">REMARK_URL</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">SECRET</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">DEBUG=true</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_GOOGLE_CID</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_GOOGLE_CSEC</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_GITHUB_CID</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_GITHUB_CSEC</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_FACEBOOK_CID</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_FACEBOOK_CSEC</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_DISQUS_CID</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_DISQUS_CSEC</span><br>      <span class="hljs-comment"># Enable it only for the initial comment import or for manual backups.</span><br>      <span class="hljs-comment"># Do not leave the server running with the ADMIN_PASSWD set if you don&#x27;t have an intention</span><br>      <span class="hljs-comment"># to keep creating backups manually!</span><br>      <span class="hljs-comment"># - ADMIN_PASSWD=&lt;your secret password&gt;</span><br>    <span class="hljs-attribute">volumes</span><span class="hljs-punctuation">:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./var:/srv/var</span><br></code></pre></td></tr></table></figure>
+<p>这是我修改过的配置文件，请将<code>###</code>改成你的配置</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs routeros">version: <span class="hljs-string">&quot;2&quot;</span><br><br>services:<br>  remark:<br>    # <span class="hljs-built_in">remove</span> the next line <span class="hljs-keyword">in</span> case you want <span class="hljs-keyword">to</span> use this docker-compose separately<br>    # as otherwise it would complain <span class="hljs-keyword">for</span> absence of Dockerfile<br>    build: .<br>    image: umputun/remark42:latest<br>    container_name: <span class="hljs-string">&quot;Remark42&quot;</span><br>    hostname: <span class="hljs-string">&quot;remark42&quot;</span><br>    restart: always<br>    networks:<br>      -<span class="hljs-built_in"> default</span><br><span class="hljs-built_in"></span><br>    logging:<br>      driver: json-file<br>      options:<br>        max-size: <span class="hljs-string">&quot;10m&quot;</span><br>        max-file: <span class="hljs-string">&quot;5&quot;</span><br><br>    # uncomment <span class="hljs-keyword">to</span> expose directly (<span class="hljs-literal">no</span> proxy)<br>    ports:<br>     - <span class="hljs-string">&quot;8005:8080&quot;</span><br>     - <span class="hljs-string">&quot;8243:8443&quot;</span><br><br>    environment:<br>      - <span class="hljs-attribute">REMARK_URL</span>=###<br>      - <span class="hljs-attribute">SITE</span>=###<br>      - <span class="hljs-attribute">SECRET</span>=###<br>      - <span class="hljs-attribute">DEBUG</span>=<span class="hljs-literal">true</span><br>      - <span class="hljs-attribute">AUTH_ANON</span>=<span class="hljs-literal">true</span><br>      - <span class="hljs-attribute">AUTH_GITHUB_CID</span>=###<br>      - <span class="hljs-attribute">AUTH_GITHUB_CSEC</span>=###<br>      - <span class="hljs-attribute">AUTH_TELEGRAM</span>=<span class="hljs-literal">true</span><br>      - <span class="hljs-attribute">TELEGRAM_TOKEN</span>=###<br>      - <span class="hljs-attribute">EMOJI</span>=<span class="hljs-literal">true</span><br>      - <span class="hljs-attribute">SMTP_HOST</span>=###<br>      - <span class="hljs-attribute">SMTP_PORT</span>=465<br>      - <span class="hljs-attribute">SMTP_TLS</span>=<span class="hljs-literal">true</span><br>      - <span class="hljs-attribute">SMTP_USERNAME</span>=###<br>      - <span class="hljs-attribute">SMTP_PASSWORD</span>=###<br>      - <span class="hljs-attribute">AUTH_EMAIL_ENABLE</span>=<span class="hljs-literal">true</span><br>      - <span class="hljs-attribute">AUTH_EMAIL_FROM</span>=###<br>      - <span class="hljs-attribute">AUTH_EMAIL_SUBJ</span>=###<br>      - <span class="hljs-attribute">NOTIFY_USERS</span>=email<br>      - <span class="hljs-attribute">NOTIFY_EMAIL_FROM</span>=###<br>      - <span class="hljs-attribute">NOTIFY_EMAIL_VERIFICATION_SUBJ</span>=Remark42 sign <span class="hljs-keyword">in</span> confirmation<br>      - <span class="hljs-attribute">NOTIFY_ADMINS</span>=telegram<br>      - <span class="hljs-attribute">NOTIFY_TELEGRAM_CHAN</span>=###<br>      - <span class="hljs-attribute">NOTIFY_TYPE</span>=telegram<br>      - <span class="hljs-attribute">ADMIN_SHARED_EMAIL</span>=###<br>      - <span class="hljs-attribute">MAX_VOTES</span>=-1<br>      - <span class="hljs-attribute">VOTES_IP_TIME</span>=0s<br>      # <span class="hljs-built_in">Enable</span> it only <span class="hljs-keyword">for</span> the initial comment import <span class="hljs-keyword">or</span> <span class="hljs-keyword">for</span><span class="hljs-built_in"> manual </span>backups.<br>      # <span class="hljs-keyword">Do</span> <span class="hljs-keyword">not</span> leave<span class="hljs-built_in"> server </span>running with ADMIN_PASSWD <span class="hljs-built_in">set</span> <span class="hljs-keyword">if</span> you don<span class="hljs-string">&#x27;t have intention</span><br><span class="hljs-string">      # to keep creating backups manually!</span><br><span class="hljs-string">      # - ADMIN_PASSWD=&lt;your secret password&gt;</span><br><span class="hljs-string">    volumes:</span><br><span class="hljs-string">      - ./data/var:/srv/var</span><br><span class="hljs-string"></span><br><span class="hljs-string">networks:</span><br><span class="hljs-string">  default:</span><br><span class="hljs-string">  name: remark-nginx</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="6-反向代理"><a href="#6-反向代理" class="headerlink" title="6. 反向代理"></a>6. 反向代理</h2><p>如果有安装UFW防火墙的记得在防火墙放行相应端口</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ufw</span> <span class="hljs-literal">allow</span> <span class="hljs-number">8005</span>/tcp<br></code></pre></td></tr></table></figure>
+<p>请把端口修改成自己的</p>
+<blockquote>
+<p><strong>说明</strong>：另外，服务商提供的防火墙也要放行（如果有的话）</p>
+</blockquote>
+<p><img src="https://img.ins.run/axauVG.webp" srcset="/img/loading.gif" lazyload alt="反向代理-1.webp"></p>
+<p><img src="https://img.ins.run/KzsyOE.webp" srcset="/img/loading.gif" lazyload alt="反向代理-2.webp"></p>
+<p>反向代理后，域名+&#x2F;web在浏览器访问</p>
+<h2 id="使用教程"><a href="#使用教程" class="headerlink" title="使用教程"></a>使用教程</h2><p>打开并编辑Fluid主题配置文件，找到 <code>comments</code> ，把 <code>enable:</code> 后面的<code>false</code> 修改成 <code>true</code> ，并在 <code>type:</code> 后面填写 <code>remark42</code></p>
+<p><img src="https://img.ins.run/LJLSC6.webp" srcset="/img/loading.gif" lazyload alt="开启评论插件.webp"></p>
+<p>然后搜索 <code>Remark42</code> 找到后把配置修改成自己的</p>
+<p><img src="https://img.ins.run/7yiabj.webp" srcset="/img/loading.gif" lazyload alt="配置Remark42.webp"></p>
+<h2 id="7-邮箱和第三方登录"><a href="#7-邮箱和第三方登录" class="headerlink" title="7. 邮箱和第三方登录"></a>7. 邮箱和第三方登录</h2><h3 id="7-1-匿名登录"><a href="#7-1-匿名登录" class="headerlink" title="7.1 匿名登录"></a>7.1 匿名登录</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">AUTH_ANON</span>=<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="7-2-Github-登录"><a href="#7-2-Github-登录" class="headerlink" title="7.2 Github 登录"></a>7.2 Github 登录</h3><ol>
+<li>在 “<strong>OAuth App</strong>”: <a target="_blank" rel="noopener" href="https://github.com/settings/developers">https://github.com/settings/developers</a></li>
+<li>点击 “<strong>New OAuth App</strong>”</li>
+<li>输入 “<strong>Application Name</strong>” Application name里填名称，如zxlxのBlog</li>
+<li>“<strong>Homepage URL</strong>” Homepage URL里填网站链接，如<a target="_blank" rel="noopener" href="https://blog.ins.run/">https://blog.ins.run</a></li>
+<li>在”<strong>Authorization callback URL</strong>“ 按 域名 + &#x2F;auth&#x2F;github&#x2F;callback 的格式输入, <a target="_blank" rel="noopener" href="https://remark42.ins.run/auth/github/callback">https://remark42.ins.run/auth/github/callback</a></li>
+<li>点击 “<strong>Register application</strong>”，得到”<strong>Client ID</strong>“和 “<strong>Client secrets</strong>”，填入到docker-compose配置文件中</li>
+</ol>
+<h3 id="7-3-Telegram-登录"><a href="#7-3-Telegram-登录" class="headerlink" title="7.3 Telegram 登录"></a>7.3 Telegram 登录</h3><h4 id="7-3-1-获取-HTTP-API"><a href="#7-3-1-获取-HTTP-API" class="headerlink" title="7.3.1 获取 HTTP API"></a>7.3.1 获取 HTTP API</h4><p>和 <a target="_blank" rel="noopener" href="https://t.me/botfather">@BotFather</a> 聊天</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/newbot<br></code></pre></td></tr></table></figure>
+<p>输入机器人名字和用户名，Telegram就会给出 HTTP API</p>
+<h4 id="7-3-2-启用-Telegram-登录"><a href="#7-3-2-启用-Telegram-登录" class="headerlink" title="7.3.2 启用 Telegram 登录"></a>7.3.2 启用 Telegram 登录</h4><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">AUTH_TELEGRAM</span>=<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="7-3-3-管理员通知"><a href="#7-3-3-管理员通知" class="headerlink" title="7.3.3 管理员通知"></a>7.3.3 管理员通知</h4><p>创建一个频道，将上面的机器人作为管理员添加到其中，配置文件中设置频道ID。<a target="_blank" rel="noopener" href="https://github.com/GabrielRF/telegram-id#web-channel-id">Telegram私有频道ID获取办法</a> ，ID是13位数字，以 <code>-</code> 负号开始</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-title class_">NOTIFY_ADMINS</span>=telegram<br><span class="hljs-title class_">NOTIFY_TELEGRAM_CHAN</span>=<span class="hljs-number">-100</span>**********<br><span class="hljs-title class_">NOTIFY_TYPE</span>=telegram<br><span class="hljs-title class_">NOTIFY_TELEGRAM_TOKEN</span>=<span class="hljs-number">62</span>*****<span class="hljs-number">253</span><span class="hljs-symbol">:AA***********************************</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="7-3-4-用户通知"><a href="#7-3-4-用户通知" class="headerlink" title="7.3.4 用户通知"></a>7.3.4 用户通知</h4><p>暂时不能使用</p>
+<h3 id="8-邮箱登录"><a href="#8-邮箱登录" class="headerlink" title="8. 邮箱登录"></a>8. 邮箱登录</h3><h4 id="8-1-SMTP配置"><a href="#8-1-SMTP配置" class="headerlink" title="8.1 SMTP配置"></a>8.1 SMTP配置</h4><ul>
+<li>要启用任何邮箱功能，下面的三个字段必须要填写：<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-attribute">SMTP_HOST</span>=###<br><span class="hljs-attribute">SMTP_PORT</span>=465<br><span class="hljs-attribute">SMTP_TLS</span>=<span class="hljs-literal">true</span><br><span class="hljs-attribute">SMTP_USERNAME</span>=###<br><span class="hljs-attribute">SMTP_PASSWORD</span>=###<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="8-2-邮箱登录验证"><a href="#8-2-邮箱登录验证" class="headerlink" title="8.2 邮箱登录验证"></a>8.2 邮箱登录验证</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-attribute">AUTH_EMAIL_ENABLE</span>=<span class="hljs-literal">true</span><br><span class="hljs-attribute">AUTH_EMAIL_FROM</span>=###<br><span class="hljs-attribute">AUTH_EMAIL_SUBJ</span>=<span class="hljs-string">&quot;在 zxlx.net 留言确认&quot;</span><br><span class="hljs-attribute">AUTH_EMAIL_CONTENT_TYPE</span>=###<br></code></pre></td></tr></table></figure>
+
+<h4 id="8-3-用户通知"><a href="#8-3-用户通知" class="headerlink" title="8.3 用户通知"></a>8.3 用户通知</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-attribute">NOTIFY_USERS</span>=email<br><span class="hljs-attribute">NOTIFY_EMAIL_FROM</span>=###<br><span class="hljs-attribute">NOTIFY_EMAIL_VERIFICATION_SUBJ</span>=<span class="hljs-string">&#x27;邮件确认&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="8-4-管理员通知"><a href="#8-4-管理员通知" class="headerlink" title="8.4 管理员通知"></a>8.4 管理员通知</h4><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs clean">NOTIFY_ADMINS=email<br>NOTIFY_EMAIL_FROM=###<br>ADMIN_SHARED_EMAIL=###<br></code></pre></td></tr></table></figure>
+
+<p>文章里还有其他的Outh没有写到，可以自行前往官网查看</p>
+<h2 id="8-更新Remark42"><a href="#8-更新Remark42" class="headerlink" title="8.更新Remark42"></a>8.更新Remark42</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs awk">cd <span class="hljs-regexp">/root/</span>data<span class="hljs-regexp">/docker_data/</span>remark42<br><br>docker-compose pull<br><br>docker-compose up -d<br><br>docker image prune<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Docker/" class="category-chain-item">Docker</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Remark42/" class="print-no-link">#Remark42</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Docker搭建Remark42评论系统</div>
+      <div>https://zxlx.ink/archives/docker-install-remark42</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>zxlx</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>September 15, 2024</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - Non-commercial">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - Share-alike">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/archives/hello-docker" title="使用Docker玩转VPS服务器">
+                        <span class="hidden-mobile">使用Docker玩转VPS服务器</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="remark42"></div>
+  <script type="text/javascript">
+    var schema = document.documentElement.getAttribute('data-user-color-scheme');
+    if (schema !== 'light' && schema !== 'dark') {
+      schema = 'light';
+    }
+    var remark_config = Object.assign(
+      {"host":"https://remark.zxlx.ink","site_id":"remark42","max_shown_comments":10,"locale":"zh","components":["embed","last-comments"]},
+      {
+        url: '/archives/docker-install-remark42',
+        page_title: 'Docker搭建Remark42评论系统',
+        theme: schema,
+      }
+    );
+
+    Fluid.utils.loadComments('#remark42', function() {
+      (function (c) {
+        for (var i = 0; i < c.length; i++) {
+          var d = document, s = d.createElement('script');
+          s.src = remark_config.host + '/web/' + c[i] + '.js';
+          s.defer = true;
+          (d.head || d.body).appendChild(s);
+        }
+      })(remark_config.components || ['embed']);
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <i class="iconfont icon-copyright"></i> <a <span>2024</span></a> <a href="https://zxlx.ink" target="_blank" rel="nofollow noopener"><span>zxlxのBlog</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
