@@ -194,7 +194,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.webp') no-repeat center center; background-size: cover;">
+     style="background: url('https://img.ins.run/EU6znK.webp') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -276,7 +276,7 @@
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    Last updated on September 22, 2024 pm
+                    Last updated on October 20, 2024 pm
                   
                 
               </p>
@@ -285,8 +285,8 @@
               <div class="markdown-body">
                 
                 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>由于手动配置服务器环境<strong>LNMP</strong>和<strong>LAMP</strong>好像有点麻烦诶，所以我干脆就使用Docker来部署服务啦，剩下不能用Docker部署的项目就用宝塔海外版本aapanel留作备用来部署（别问为什么不用国内版，因为加入了强制手机登陆验证）。</p>
-<h2 id="2-操作环境"><a href="#2-操作环境" class="headerlink" title="2. 操作环境"></a>2. 操作环境</h2><ul>
-<li>服务器：我自己搭建用的是 <a target="_blank" rel="noopener" href="https://racknerd.com/"><strong>Racknerd</strong></a> 26.25 &#x2F; USD &#x2F; 年 VPS 一台，最好是选 非大陆（香港）的服务器</li>
+<h2 id="4-环境说明"><a href="#4-环境说明" class="headerlink" title="4. 环境说明"></a>4. 环境说明</h2><ul>
+<li>服务器：我自己搭建用的是 <a target="_blank" rel="noopener" href="https://racknerd.com/"><strong>Racknerd</strong></a> 的VPS，最好是选 非大陆（香港）的服务器</li>
 <li>系统：<strong>Debian10</strong>或以上（<strong>Ubuntu 20.04</strong>以上）</li>
 </ul>
 <h2 id="3-BBR"><a href="#3-BBR" class="headerlink" title="3. BBR"></a>3. BBR</h2><p>新的 TCP 拥塞控制算法 <code>BBR (Bottleneck Bandwidth and RTT)</code> 可以让服务器的带宽尽量跑满，并且尽量不要有排队的情况，让网络服务更佳稳定和高效。</p>
@@ -294,7 +294,7 @@
 <p>目前 Debian10 自带的内核版本一般是4.19，我们可以查看一下内核版本（如果是 5.6 及以上内核则集成了<strong>WireGuard</strong>）</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">hostnamectl</span>   <span class="hljs-comment">#或者 uname -r</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="https://img.ins.run/oN66El.webp" srcset="/img/loading.gif" lazyload alt="查看内核.webp"></p>
+<p><img src="https://img.zxlx.net/images/1z9.webp" srcset="/img/loading.gif" lazyload alt="查看内核.webp"></p>
 <p>我们选择更新到新的稳定版本的<code>5.1</code>内核（目前为止），再开启<code>BBR</code>。</p>
 <h3 id="3-1-给-Debian-10-添加官方backports源，获取更新的软件库"><a href="#3-1-给-Debian-10-添加官方backports源，获取更新的软件库" class="headerlink" title="3.1 给 Debian 10 添加官方backports源，获取更新的软件库"></a>3.1 给 Debian 10 添加官方backports源，获取更新的软件库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /etc/apt/sources.list<br></code></pre></td></tr></table></figure>
 
@@ -304,7 +304,7 @@
 <p>然后把下面这一条加在最后，并保存退出</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">deb</span> http://archive.debian.org/debian buster-backports main<br></code></pre></td></tr></table></figure>
 
-<p><img src="https://img.ins.run/U1ekGd.webp" srcset="/img/loading.gif" lazyload alt="添加backports软件源.webp"></p>
+<p><img src="https://img.zxlx.net/images/pQy.webp" srcset="/img/loading.gif" lazyload alt="添加backports软件源.webp"></p>
 <h3 id="3-2-刷新软件库并查询-Debian-官方的最新版内核并安装"><a href="#3-2-刷新软件库并查询-Debian-官方的最新版内核并安装" class="headerlink" title="3.2 刷新软件库并查询 Debian 官方的最新版内核并安装"></a>3.2 刷新软件库并查询 Debian 官方的最新版内核并安装</h3><p>请务必安装你的 VPS 对应的版本（本文以比较常见的 <code>amd64</code> 为例）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt update &amp;&amp; <span class="hljs-built_in">sudo</span> apt -t buster-backports install linux-image-amd64<br></code></pre></td></tr></table></figure>
 
@@ -323,7 +323,7 @@
 <p>把下面的内容添加进去</p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">net.core.default_qdisc</span>=fq<br><span class="hljs-attr">net.ipv4.tcp_congestion_control</span>=bbr<br></code></pre></td></tr></table></figure>
 
-<p><img src="https://img.ins.run/hPjhKj.webp" srcset="/img/loading.gif" lazyload alt="开启BBR.webp"></p>
+<p><img src="https://img.zxlx.net/images/xgz.webp" srcset="/img/loading.gif" lazyload alt="开启BBR.webp"></p>
 <p>重启 VPS、使内核更新和<code>BBR</code>设置都生效</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> reboot<br></code></pre></td></tr></table></figure>
 
@@ -341,18 +341,18 @@
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">uname</span> -r<br></code></pre></td></tr></table></figure>
 
-<p><img src="https://img.ins.run/Gm5Wg0.webp" srcset="/img/loading.gif" lazyload alt="查看升级后内核.webp"></p>
+<p><img src="https://img.zxlx.net/images/hlW.webp" srcset="/img/loading.gif" lazyload alt="查看升级后内核.webp"></p>
 <p>可以看到，内核版本已经变成了<code>5.10</code></p>
 <h2 id="4-修改时间"><a href="#4-修改时间" class="headerlink" title="4. 修改时间"></a>4. 修改时间</h2><p>首先，我们需要修改服务器的时间与我们本地的时间一致</p>
 <p>香港的服务器的话时间是一样的，如果是海外的服务器，可以通过下面的方式修改</p>
 <p>先查看时间：</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">timedatectl</span><br></code></pre></td></tr></table></figure>
 <p>可以看到我们的时间是洛杉矶时区，这边需要修改改一下</p>
-<p><img src="https://img.ins.run/gnF5b3.webp" srcset="/img/loading.gif" lazyload alt="查看时区.webp"></p>
+<p><img src="https://img.zxlx.net/images/kd7.webp" srcset="/img/loading.gif" lazyload alt="查看时区.webp"></p>
 <p>把时区改成上海</p>
 <figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">sudo</span> <span class="hljs-string">timedatectl</span> <span class="hljs-built_in">set-timezone</span> <span class="hljs-string">Asia</span>/<span class="hljs-string">Shanghai</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="https://img.ins.run/vW0dpS.webp" srcset="/img/loading.gif" lazyload alt="查看修改后时区.webp"></p>
+<p><img src="https://img.zxlx.net/images/Dh6.webp" srcset="/img/loading.gif" lazyload alt="查看修改后时区.webp"></p>
 <h2 id="5-安装Docker、Docker-compose"><a href="#5-安装Docker、Docker-compose" class="headerlink" title="5. 安装Docker、Docker-compose"></a>5. 安装Docker、Docker-compose</h2><h3 id="5-1-非大陆Docker安装"><a href="#5-1-非大陆Docker安装" class="headerlink" title="5.1 非大陆Docker安装"></a>5.1 非大陆Docker安装</h3><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">wget -qO- <span class="hljs-built_in">get</span>.docker.<span class="hljs-keyword">com</span> | bash<br></code></pre></td></tr></table></figure>
 
 <h4 id="5-2-查看版本"><a href="#5-2-查看版本" class="headerlink" title="5.2 查看版本"></a>5.2 查看版本</h4><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">docker -v</span><br></code></pre></td></tr></table></figure>
@@ -369,7 +369,7 @@
 
 <h4 id="6-3-查看版本"><a href="#6-3-查看版本" class="headerlink" title="6.3 查看版本"></a>6.3 查看版本</h4><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">docker-compose <span class="hljs-comment">--version</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="https://img.ins.run/hwg4vQ.webp" srcset="/img/loading.gif" lazyload alt="Docker和docker-compose版本.webp"></p>
+<p><img src="https://img.zxlx.net/images/5RC.webp" srcset="/img/loading.gif" lazyload alt="Docker和docker-compose版本.webp"></p>
 <h3 id="6-4-修改Docker配置（来自烧饼博客）"><a href="#6-4-修改Docker配置（来自烧饼博客）" class="headerlink" title="6.4 修改Docker配置（来自烧饼博客）"></a>6.4 修改Docker配置（来自<a target="_blank" rel="noopener" href="https://u.sb/debian-install-docker">烧饼博客</a>）</h3><p>以下配置会增加一段自定义内网 IPv6 地址，开启容器的 IPv6 功能，以及限制日志文件大小，防止 Docker 日志塞满硬盘 (泪的教训)</p>
 <figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs arcade">cat &gt; <span class="hljs-regexp">/etc/</span>docker/daemon.json &lt;&lt;EOF<br>&#123;<br>    <span class="hljs-string">&quot;log-driver&quot;</span>: <span class="hljs-string">&quot;json-file&quot;</span>,<br>    <span class="hljs-string">&quot;log-opts&quot;</span>: &#123;<br>        <span class="hljs-string">&quot;max-size&quot;</span>: <span class="hljs-string">&quot;20m&quot;</span>,<br>        <span class="hljs-string">&quot;max-file&quot;</span>: <span class="hljs-string">&quot;3&quot;</span><br>    &#125;,<br>    <span class="hljs-string">&quot;ipv6&quot;</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-string">&quot;fixed-cidr-v6&quot;</span>: <span class="hljs-string">&quot;fd00:dead:beef:c0::/80&quot;</span>,<br>    <span class="hljs-string">&quot;experimental&quot;</span>:<span class="hljs-literal">true</span>,<br>    <span class="hljs-string">&quot;ip6tables&quot;</span>:<span class="hljs-literal">true</span><br>&#125;<br>EOF<br></code></pre></td></tr></table></figure>
 <p>然后重启 Docker 服务</p>
