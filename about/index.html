@@ -1,7 +1,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en" data-default-color-scheme=auto>
+<html lang="zh-CN" data-default-color-scheme=auto>
 
 
 
@@ -15,14 +15,14 @@
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="zxlx">
-  <meta name="keywords" content="Blog,Html">
+  <meta name="author" content="逐星落汐.">
+  <meta name="keywords" content="">
   
-    <meta name="description" content="zxlx的小破站~">
+    <meta name="description" content="逐星落汐的笔记本">
   
   
   
-  <title>About - zxlxのBlog</title>
+  <title>关于 - 逐星落汐.</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -60,7 +60,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"zxlx.ink","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"zxlx.ink","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":["archives","post","tag","category","about","links","page",404]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -86,7 +86,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>zxlxのBlog</strong>
+      <strong>逐星落汐.</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -106,19 +106,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
-                <span>Home</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>Archives</span>
+                <span>首页</span>
               </a>
             </li>
           
@@ -130,7 +118,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
-                <span>Categories</span>
+                <span>分类</span>
               </a>
             </li>
           
@@ -140,21 +128,9 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>Tags</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>About</span>
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
               </a>
             </li>
           
@@ -166,7 +142,19 @@
             <li class="nav-item">
               <a class="nav-link" href="/links/" target="_self">
                 <i class="iconfont icon-link-fill"></i>
-                <span>Links</span>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
               </a>
             </li>
           
@@ -194,13 +182,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.webp') no-repeat center center; background-size: cover;">
+     style="background: url('/img/wallhaven-x6vkoz.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="About"></span>
+            <span id="subtitle" data-typed-text="关于"></span>
           
         </div>
 
@@ -233,7 +221,7 @@
 
 <div class="text-center">
   <div class="about-info">
-    <div class="about-name">zxlx.</div>
+    <div class="about-name">逐星落汐.</div>
     <div class="about-intro">Technology is The First Productive Force.</div>
     <div class="about-icons">
       
@@ -249,75 +237,15 @@
           
         </a>
       
-        
-        
-        
-        <a href=https://t.me/zxlxBot class="
-           hint--bottom hint--rounded"
-           aria-label=Telegram
-           target="_blank"
-        >
-          <i class="iconfont icon-telegram-fill" aria-hidden="true"></i>
-          
-        </a>
-      
     </div>
   </div>
 </div>
 
 <article class="about-content page-content mt-5">
   <div class="markdown-body">
-    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>首先欢迎您来到zxlx的博客。<a target="_blank" rel="noopener" href="https://github.com/Calm-Official/Blog">本项目</a>的main分支是<a href="https://zxlx.ink/">https://zxlx.ink</a> 站点的构建源文件，使用nodejs构建，再次欢迎您到访此站点。</p>
-<h2 id="站点介绍"><a href="#站点介绍" class="headerlink" title="站点介绍"></a>站点介绍</h2><ul>
-<li>本博客的内容为自己的学习笔记</li>
-<li>本博客构建自Hexo，主题为Fluid</li>
-</ul>
-<h2 id="个人标签"><a href="#个人标签" class="headerlink" title="个人标签"></a>个人标签</h2><ul>
-<li>喜欢代码，喜欢折腾</li>
-<li>擅长音游和小部分FPS游戏</li>
-</ul>
-<h2 id="联系我"><a href="#联系我" class="headerlink" title="联系我"></a>联系我</h2><p>Telegram：<a target="_blank" rel="noopener" href="https://t.me/zxlx_Official">https://t.me/zxlx_Official</a><br>Email：<a href="mailto:&#122;&#x68;&#117;&#x78;&#x69;&#x6e;&#103;&#x6c;&#117;&#x6f;&#120;&#x69;&#x40;&#x67;&#x6d;&#x61;&#x69;&#108;&#46;&#x63;&#111;&#x6d;">&#122;&#x68;&#117;&#x78;&#x69;&#x6e;&#103;&#x6c;&#117;&#x6f;&#120;&#x69;&#x40;&#x67;&#x6d;&#x61;&#x69;&#108;&#46;&#x63;&#111;&#x6d;</a></p>
-
+    
   </div>
 
-  
-    <!-- Comments -->
-    <article id="comments" lazyload>
-      
-      
-        
-      
-      
-  <div id="remark42"></div>
-  <script type="text/javascript">
-    var schema = document.documentElement.getAttribute('data-user-color-scheme');
-    if (schema !== 'light' && schema !== 'dark') {
-      schema = 'light';
-    }
-    var remark_config = Object.assign(
-      {"host":"https://remark.zxlx.ink","site_id":"remark42","max_shown_comments":10,"locale":"zh","components":["embed","last-comments"]},
-      {
-        url: '/about/index.html',
-        page_title: 'About',
-        theme: schema,
-      }
-    );
-
-    Fluid.utils.loadComments('#remark42', function() {
-      (function (c) {
-        for (var i = 0; i < c.length; i++) {
-          var d = document, s = d.createElement('script');
-          s.src = remark_config.host + '/web/' + c[i] + '.js';
-          s.defer = true;
-          (d.head || d.body).appendChild(s);
-        }
-      })(remark_config.components || ['embed']);
-    });
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
-
-
-    </article>
   
 </article>
 
@@ -366,7 +294,7 @@
   <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
         <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -374,7 +302,7 @@
       <div class="modal-body mx-3">
         <div class="md-form mb-5">
           <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
         </div>
         <div class="list-group" id="local-search-result"></div>
       </div>
@@ -513,7 +441,7 @@
   
 
   <noscript>
-    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
 </body>
 </html>
